@@ -1,37 +1,76 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Dynamic Dropdown Example</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    select {
+      width: 200px;
+      padding: 5px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    select:disabled {
+      color: #999;
+    }
+
+    .wrapper {
+      margin: auto;
+      text-align: center;
+    }
+  </style>
 </head>
+
 <body>
-  <h2>Select Region, Province, City, and Barangay</h2>
+  <div class="wrapper">
 
-  <label for="region">Region:</label>
-  <select id="region" onchange="populateProvinces()">
-    <option value="">Select Region</option>
-  </select>
 
-  <label for="province">Province:</label>
-  <select id="province" onchange="populateCities()">
-    <option value="">Select Province</option>
-  </select>
+    <h2>Select Region, Province, City, and Barangay</h2>
 
-  <label for="city">City:</label>
-  <select id="city" onchange="populateBarangays()">
-    <option value="">Select City</option>
-  </select>
+    <label for="region">Region:</label>
+    <select id="region" onchange="populateProvinces()">
+      <option value="">Select Region</option>
+    </select>
 
-  <label for="barangay">Barangay:</label>
-  <select id="barangay">
-    <option value="">Select Barangay</option>
-  </select>
+    <label for="province">Province:</label>
+    <select id="province" onchange="populateCities()">
+      <option value="">Select Province</option>
+    </select>
 
+    <label for="city">City:</label>
+    <select id="city" onchange="populateBarangays()">
+      <option value="">Select City</option>
+    </select>
+
+    <label for="barangay">Barangay:</label>
+    <select id="barangay">
+      <option value="">Select Barangay</option>
+    </select>
+  </div>
   <script>
     var data = {};
 
     // Load data from data.json
-    $.getJSON("data.json", function(jsonData) {
+    $.getJSON("data.json", function (jsonData) {
       data = jsonData;
       console.log(data)
       populateRegions();
@@ -43,7 +82,7 @@
       regionDropdown.empty();
       regionDropdown.append('<option value="">Select Region</option>');
 
-      $.each(data, function(regionCode, regionData) {
+      $.each(data, function (regionCode, regionData) {
         regionDropdown.append('<option value="' + regionCode + '">' + regionData.regions + '</option>');
       });
     }
@@ -57,7 +96,7 @@
 
       if (regionCode) {
         var provinces = data[regionCode].provinces;
-        $.each(provinces, function(provinceName, provinceData) {
+        $.each(provinces, function (provinceName, provinceData) {
           provinceDropdown.append('<option value="' + provinceName + '">' + provinceName + '</option>');
         });
       }
@@ -73,7 +112,7 @@
 
       if (regionCode && provinceName) {
         var cities = data[regionCode].provinces[provinceName].cities;
-        $.each(cities, function(cityName, cityData) {
+        $.each(cities, function (cityName, cityData) {
           cityDropdown.append('<option value="' + cityName + '">' + cityName + '</option>');
         });
       }
@@ -90,11 +129,13 @@
 
       if (regionCode && provinceName && cityName) {
         var barangays = data[regionCode].provinces[provinceName].cities[cityName].barangays;
-        $.each(barangays, function(index, barangayName) {
+        $.each(barangays, function (index, barangayName) {
           barangayDropdown.append('<option value="' + barangayName + '">' + barangayName + '</option>');
         });
       }
     }
   </script>
+
 </body>
+
 </html>
