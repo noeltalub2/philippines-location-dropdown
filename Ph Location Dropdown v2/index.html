@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Dynamic Dropdown Example</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    select {
+      width: 200px;
+      padding: 5px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    select:disabled {
+      color: #999;
+    }
+
+    .wrapper {
+      margin: auto;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+
+    <h2>Select Region, Province, City, and Barangay</h2>
+
+    <label for="region">Region:</label>
+    <select id="region">
+      <option selected disabled>Select Region</option>
+    </select>
+
+    <label for="province">Province:</label>
+    <select id="province">
+
+    </select>
+
+    <label for="city">City:</label>
+    <select id="city">
+
+    </select>
+
+    <label for="barangay">Barangay:</label>
+    <select id="barangay">
+
+    </select>
+
+  </div>
+  <script>
+    $(document).ready(function () {
+      // Load regions
+      $.getJSON("regions.json", function (data) {
+        var regionDropdown = $("#region");
+        $.each(data, function (index, region) {
+          regionDropdown.append('<option value="' + region.region_code + '">' + region.region_name + '</option>');
+        });
+      });
+
+      // Load provinces when region is selected
+      $("#region").change(function () {
+        var selectedRegionCode = $(this).val();
+        $("#province").empty().append('<option value="" selected disabled>Select Province</option>');
+        $("#city").empty().append('<option value="" selected  disabled>Select City</option>');
+        $("#barangay").empty().append('<option value="" selected disabled>Select Barangay</option>');
+
+        if (selectedRegionCode) {
+          $.getJSON("provinces.json", function (data) {
+            var provinceDropdown = $("#province");
+            $.each(data, function (index, province) {
+              if (province.region_code === selectedRegionCode) {
+                provinceDropdown.append('<option value="' + province.province_code + '">' + province.province_name + '</option>');
+              }
+            });
+          });
+        }
+      });
+
+      // Load cities when province is selected
+      $("#province").change(function () {
+        var selectedProvinceCode = $(this).val();
+        $("#city").empty().append('<option value="" selected  disabled>Select City</option>');
+        $("#barangay").empty().append('<option value="" selected disabled>Select Barangay</option>');
+
+        if (selectedProvinceCode) {
+          $.getJSON("cities.json", function (data) {
+            var cityDropdown = $("#city");
+            $.each(data, function (index, city) {
+              if (city.province_code === selectedProvinceCode) {
+                cityDropdown.append('<option value="' + city.city_code + '">' + city.city_name + '</option>');
+              }
+            });
+          });
+        }
+      });
+
+      // Load barangays when city is selected
+      $("#city").change(function () {
+        var selectedCityCode = $(this).val();
+        $("#barangay").empty().append('<option value="" selected disabled>Select Barangay</option>');
+
+        if (selectedCityCode) {
+          $.getJSON("barangays.json", function (data) {
+            var barangayDropdown = $("#barangay");
+            $.each(data, function (index, barangay) {
+              if (barangay.city_code === selectedCityCode) {
+                barangayDropdown.append('<option value="' + barangay.brgy_code + '">' + barangay.brgy_name + '</option>');
+              }
+            });
+          });
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

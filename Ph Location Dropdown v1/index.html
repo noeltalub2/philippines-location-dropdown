@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dynamic Dropdown Example</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h2>Select Region, Province, City, and Barangay</h2>
+
+  <label for="region">Region:</label>
+  <select id="region" onchange="populateProvinces()">
+    <option value="">Select Region</option>
+  </select>
+
+  <label for="province">Province:</label>
+  <select id="province" onchange="populateCities()">
+    <option value="">Select Province</option>
+  </select>
+
+  <label for="city">City:</label>
+  <select id="city" onchange="populateBarangays()">
+    <option value="">Select City</option>
+  </select>
+
+  <label for="barangay">Barangay:</label>
+  <select id="barangay">
+    <option value="">Select Barangay</option>
+  </select>
+
+  <script>
+    var data = {};
+
+    // Load data from data.json
+    $.getJSON("data.json", function(jsonData) {
+      data = jsonData;
+      console.log(data)
+      populateRegions();
+    });
+
+    // Populate regions dropdown
+    function populateRegions() {
+      var regionDropdown = $("#region");
+      regionDropdown.empty();
+      regionDropdown.append('<option value="">Select Region</option>');
+
+      $.each(data, function(regionCode, regionData) {
+        regionDropdown.append('<option value="' + regionCode + '">' + regionData.regions + '</option>');
+      });
+    }
+
+    // Function to populate provinces dropdown based on selected region
+    function populateProvinces() {
+      var regionCode = $("#region").val();
+      var provinceDropdown = $("#province");
+      provinceDropdown.empty();
+      provinceDropdown.append('<option value="">Select Province</option>');
+
+      if (regionCode) {
+        var provinces = data[regionCode].provinces;
+        $.each(provinces, function(provinceName, provinceData) {
+          provinceDropdown.append('<option value="' + provinceName + '">' + provinceName + '</option>');
+        });
+      }
+    }
+
+    // Function to populate cities dropdown based on selected province
+    function populateCities() {
+      var regionCode = $("#region").val();
+      var provinceName = $("#province").val();
+      var cityDropdown = $("#city");
+      cityDropdown.empty();
+      cityDropdown.append('<option value="">Select City</option>');
+
+      if (regionCode && provinceName) {
+        var cities = data[regionCode].provinces[provinceName].cities;
+        $.each(cities, function(cityName, cityData) {
+          cityDropdown.append('<option value="' + cityName + '">' + cityName + '</option>');
+        });
+      }
+    }
+
+    // Function to populate barangays dropdown based on selected city
+    function populateBarangays() {
+      var regionCode = $("#region").val();
+      var provinceName = $("#province").val();
+      var cityName = $("#city").val();
+      var barangayDropdown = $("#barangay");
+      barangayDropdown.empty();
+      barangayDropdown.append('<option value="">Select Barangay</option>');
+
+      if (regionCode && provinceName && cityName) {
+        var barangays = data[regionCode].provinces[provinceName].cities[cityName].barangays;
+        $.each(barangays, function(index, barangayName) {
+          barangayDropdown.append('<option value="' + barangayName + '">' + barangayName + '</option>');
+        });
+      }
+    }
+  </script>
+</body>
+</html>
